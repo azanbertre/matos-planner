@@ -34,3 +34,12 @@ a{
   transform: scale(0.97);
   border-radius: 20px;
 }
+
+.text-primary {
+  color: #33395E !important;
+}
+
+.block-primary {
+  background-color: #33395E !important;
+  color: #fff !important;
+}

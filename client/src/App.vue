@@ -19,7 +19,7 @@ export default {
 
     computed: {
         authenticated() {
-            return this.$store.getters.token !== '';
+            return this.$store.getters.authenticated;
         },
     },
 

@@ -25,8 +25,12 @@ const store = new Vuex.Store({
         },
         logout(state) {
             state.token = '';
+            state.user = {};
+            state.refresh_token = '';
+
+            localStorage.setItem("refreshToken", '');
             localStorage.setItem("token", '');
-            localStorage.setItem("user", {});
+            localStorage.setItem("user", null);
         }
     },
     getters: {
@@ -35,6 +39,9 @@ const store = new Vuex.Store({
         },
         user(state) {
             return state.user;
+        },
+        authenticated(state) {
+            return state.token && state.user ? true : false;
         }
     },
     actions: {
