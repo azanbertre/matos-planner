@@ -23,7 +23,7 @@ def create_app():
         SECRET_KEY='6h6QiNgtCRqZazw3lpdSW87k2J604ElubccVH6fB6vWrvaECGLy14cnFg8brGjD',
         JWT_SECRET_KEY="q6wLVfDr5tFbNnQf1ORgME2bOXyioYL63DYWcEMgfqIswuKPstUFfClD8807EJv",
         JWT_ACCESS_TOKEN_EXPIRES=False,
-        DATABASE='mongodb:27017/planner',
+        DATABASE='planner_mongodb:27017/planner',
     )
     jwt = JWTManager(app)
 
