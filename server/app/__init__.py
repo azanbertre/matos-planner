@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify, session
-from flask_socketio import SocketIO, emit
 from flask_cors import CORS
 
 from io import StringIO
