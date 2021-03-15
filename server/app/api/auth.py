@@ -95,7 +95,6 @@ def refresh():
             'id': str(user['_id']),
             'nickname': user.get('nickname', user['username']),
             'groups': user.get('groups', [Groups.USER]),
-            'registered': user.get('registered')
         },
         'success': True
     }), 200

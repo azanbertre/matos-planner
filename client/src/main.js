@@ -15,38 +15,38 @@ Vue.config.productionTip = false;
 const host = "";
 
 const api = {
-  get(url, authentication=true, defaultRoute="/api") {
-    url = host + defaultRoute + url;
+    get(url, authentication=true, defaultRoute="/api") {
+        url = host + defaultRoute + url;
 
-    if (store.state.token === '' && authentication) {
-        return new Promise((resolve, reject) => {
-            reject("No authorization token");
-        });
+        if (store.state.token === '' && authentication) {
+            return new Promise((resolve, reject) => {
+                reject("No authorization token");
+            });
+        }
+
+        var options = {
+            url: url,
+            method: 'get'
+        }
+        if (authentication) options.headers = { Authorization: `Bearer ${store.state.token}` }
+
+        return axios(options);
+    },
+
+    post(url, data, authentication=true, defaultRoute="/api") {
+        url = host + defaultRoute + url;
+
+        if (store.state.token === '' && authentication) {
+            return new Promise((resolve, reject) => {
+                reject("No authorization token")
+            });
+        }
+
+        var headers = {};
+        if (authentication) headers = {Authorization: `Bearer ${store.state.token}`}
+
+        return axios.post(url, data, {headers: headers});
     }
-
-    var options = {
-        url: url,
-        method: 'get'
-    }
-    if (authentication) options.headers = { Authorization: `Bearer ${store.state.token}` }
-
-    return axios(options);
-  },
-
-  post(url, data, authentication=true, defaultRoute="/api") {
-    url = host + defaultRoute + url;
-
-    if (store.state.token === '' && authentication) {
-        return new Promise((resolve, reject) => {
-          reject("No authorization token")
-        });
-    }
-
-    var headers = {};
-    if (authentication) headers = {Authorization: `Bearer ${store.state.token}`}
-
-    return axios.post(url, data, {headers: headers});
-  }
 }
 
 Vue.prototype.$api = api;
@@ -54,9 +54,9 @@ Vue.prototype.$api = api;
 Vue.use(VueAwesomeSwiper, VueClipboard)
 
 new Vue({
-  router,
-  store,
-  vuetify,
-  VueClipboard,
-  render: h => h(App)
+    router,
+    store,
+    vuetify,
+    VueClipboard,
+    render: h => h(App)
 }).$mount("#app");

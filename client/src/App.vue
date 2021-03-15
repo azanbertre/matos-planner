@@ -26,13 +26,13 @@ export default {
     watch: {
         authenticated() {
             if (!this.authenticated) {
-                this.$router.replace("/login");
+                this.$router.replace("/");
             }
         }
     },
 
     mounted() {
-            this.checkAuth();
+        this.checkAuth();
     },
 
     methods: {
@@ -41,7 +41,7 @@ export default {
         },
         logout() {
             this.$store.commit('logout');
-            this.$router.push("/login");
+            this.$router.push("/");
         }
     },
 
