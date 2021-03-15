@@ -1,14 +1,13 @@
 from app.db import get_db
-from app.models.users.User import User
 
 from flask import g
 from bson import ObjectId
 
 
-def current_user() -> User:
+def current_user() -> dict:
     """ Return current logged in user
 
-        @return : User
+        @return : dict
     """
 
     if not g.user:
@@ -35,7 +34,7 @@ def get_user(data: dict, projection: dict=None) -> dict:
 
         @param data : dict \n
         @param projection : dict \n
-        @return : User
+        @return : dict
     """
 
     db = get_db()
@@ -56,7 +55,7 @@ def get_user_by_id(user_id: ObjectId, projection: dict=None) -> dict:
 
         @param user_id : ObjectId \n
         @param projection : dict \n
-        @return : User
+        @return : dict
     """
 
     db = get_db()
@@ -69,7 +68,7 @@ def get_user_by_id(user_id: ObjectId, projection: dict=None) -> dict:
 def get_user_permissions(user:dict={}) -> list:
     """ Return user permissions
 
-        @param user : User \n
+        @param user : dict \n
         @return : list
     """
 
