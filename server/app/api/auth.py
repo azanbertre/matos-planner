@@ -1,13 +1,12 @@
 from flask import g, request, redirect, jsonify
 from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token, get_jwt_identity, verify_jwt_in_request, get_jwt_claims,
-    create_refresh_token, jwt_refresh_token_required
+    JWTManager, jwt_required, create_access_token, get_jwt_identity, verify_jwt_in_request,
+    create_refresh_token
 )
 from werkzeug.security import check_password_hash, generate_password_hash
 from datetime import datetime
 from bson import ObjectId
 
-from app.models.users.User import User
 from app.decorators import login_required
 from app.utils import get_timestamp
 from app.auth import get_user_by_id, get_user
@@ -66,7 +65,7 @@ def login():
 
 
 @bp.route("/auth/refresh", methods=['GET'])
-@jwt_refresh_token_required
+@jwt_required(refresh=True)
 def refresh():
     """ Route to refresh user authentication token
     """
