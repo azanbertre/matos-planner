@@ -1,0 +1,44 @@
+version: "3.3"
+
+services:
+  server:
+    build: ./server
+    container_name: planner_server
+    restart: always
+    volumes:
+      - './server:/server'
+    expose:
+      - 8000
+
+  client:
+    build: ./client
+    container_name: planner_client
+    restart: always
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - './client:/client'
+      - 'node_modules:/client/node_modules'
+    expose:
+      - 8080
+
+  mongodb:
+    image: mongo:4.4.1-bionic
+    container_name: planner_mongodb
+    restart: always
+    volumes:
+      - './database:/data/db'
+    expose:
+      - 27017
+
+  nginx:
+    build: ./nginx
+    container_name: planner_nginx
+    restart: always
+    # port allows the host machine to link to container
+    # pass 80 from host machine to 80 of the image filesystem
+    ports:
+      - "8080:8080"
+
+volumes:
+  node_modules:

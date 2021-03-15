@@ -1,0 +1,36 @@
+a{
+  text-decoration: none;
+}
+
+.text-secondary{
+  color: #818BAE !important;
+}
+
+.text-tertiary{
+  font-size: 9pt;
+}
+
+.text-black{
+  color: #384264 !important;
+}
+
+.text-gray{
+  color: #9FA8C7;
+}
+
+.text-blue{
+  color: #0077FF;
+}
+
+.btn-smooth{
+  box-shadow: 0px 12px 30px #56CD7952 !important;
+  border-radius: 7px;
+  transition: .5s;
+  transform: rotate(0deg);
+}
+
+.btn-smooth:hover{
+  box-shadow: 0px 12px 40px #56cd7a96 !important;
+  transform: scale(0.97);
+  border-radius: 20px;
+}
