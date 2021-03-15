@@ -45,9 +45,3 @@ def create_app():
     #     return response
 
     return app
-
-
-# if __name__ == '__main__':
-#     print('here')
-#     app = create_app()
-#     socket.socketio.run(app, debug=True)
