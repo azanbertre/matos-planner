@@ -42,12 +42,12 @@ def get_user(data: dict, projection: dict=None) -> dict:
     if projection:
         return db.users.find_one({'$or': [
             {'username': data.get('username')},
-            {'email': data.get('email')}
+            # {'email': data.get('email')}
         ]}, projection)
 
     return db.users.find_one({'$or': [
         {'username': data.get('username')},
-        {'email': data.get('email')}
+        # {'email': data.get('email')}
     ]})
 
 def get_user_by_id(user_id: ObjectId, projection: dict=None) -> dict:
