@@ -25,7 +25,7 @@
                     <v-card-text>
                         <v-row>
                             <v-col cols="12">
-                                <v-text-field v-model="projectName" outlined label="Name" hide-details></v-text-field>
+                                <v-text-field v-model="projectName" outlined label="Nome" hide-details></v-text-field>
                             </v-col>
                         </v-row>
                         <v-row>

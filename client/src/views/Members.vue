@@ -30,7 +30,7 @@
                     <v-card-text>
                         <v-row>
                             <v-col cols="4">
-                                <v-text-field v-model="memberName" outlined label="Name" hide-details></v-text-field>
+                                <v-text-field v-model="memberName" outlined label="Nome" hide-details></v-text-field>
                             </v-col>
                             <v-col cols="4">
                                 <v-text-field v-model="memberCapacity" outlined label="Capacidade (Vazio para usar do cargo)" hide-details type="number" placeholder="Deixar vazio para usar do cargo"></v-text-field>
