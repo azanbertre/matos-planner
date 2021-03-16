@@ -8,7 +8,12 @@ const store = new Vuex.Store({
     state: {
         token: localStorage.getItem("token") || '',
         refresh_token: localStorage.getItem("refreshToken") || '',
-        user: JSON.parse(localStorage.getItem("user")) || {}
+        user: JSON.parse(localStorage.getItem("user")) || {},
+        info: {
+            message: "",
+            color: "green",
+            show: false
+        },
     },
     mutations: {
         setToken(state, data) {
@@ -31,6 +36,13 @@ const store = new Vuex.Store({
             localStorage.setItem("refreshToken", '');
             localStorage.setItem("token", '');
             localStorage.setItem("user", null);
+        },
+        setInfo(state, data) {
+            state.info = {
+                message: data.message,
+                color: data.success ? 'green' : 'red',
+                show: data.message.length > 0
+            }
         }
     },
     getters: {
@@ -42,6 +54,9 @@ const store = new Vuex.Store({
         },
         authenticated(state) {
             return state.token && state.user ? true : false;
+        },
+        info(state) {
+            return state.info;
         }
     },
     actions: {
