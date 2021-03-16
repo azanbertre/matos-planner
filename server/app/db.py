@@ -116,5 +116,24 @@ def init_db_command():
     click.echo("Initialized the database.")
 
 
+@click.command('create-admin')
+@click.argument('username')
+@click.argument('password')
+@with_appcontext
+def create_admin_command(username, password):
+    db = get_db()
+
+    db.users.find_one_and_update(
+        {'username': username},
+        {'$set': {
+            'username': username,
+            'password': generate_password_hash(password),
+            'groups': ['admin', 'user']
+        }},
+        upsert=True
+    )
+
+
 def init_app(app):
     app.cli.add_command(init_db_command)
+    app.cli.add_command(create_admin_command)
