@@ -21,14 +21,16 @@ def members():
         data = request.json
 
         name = data.get('name')
-        start = data.get('start')
-        end = data.get('end')
+        start = data.get('fortnight_start')
+        end = data.get('fortnight_end')
         role_id = data.get('role_id')
+        capacity = data.get('capacity_override')
 
         query = {
             'name': name,
-            'fortnight_start': Fortnight.get_slug(start),
-            'fortnight_end': Fortnight.get_slug(end),
+            'fortnight_start': start,
+            'fortnight_end': end,
+            'capacity_override': capacity,
             'role_id': ObjectId(role_id),
             'active': True,
             'created_at': get_timestamp()
@@ -44,7 +46,7 @@ def members():
     members = db.members.aggregate([
         {
             '$match': {
-                'active': {'$ne': True}
+                'active': {'$ne': False}
             }
         },
         {
@@ -54,6 +56,9 @@ def members():
                 'foreignField': '_id',
                 'as': 'role'
             }
+        },
+        {
+            '$unwind': '$role'
         }
     ])
 
@@ -62,3 +67,69 @@ def members():
         'message': '',
         'members': list(members)
     })
+
+
+@bp.route('/members/<objectid:member_id>', methods=('PUT',))
+@login_required
+def members_edit(member_id):
+    db = get_db()
+
+    data = request.json
+
+    if not member_id:
+        return jsonify({
+            'success': False,
+            'message': 'Não foi possivel editar o membro'
+        })
+
+    name = data.get('name')
+    start = data.get('fortnight_start')
+    end = data.get('fortnight_end')
+    role_id = data.get('role_id')
+    capacity = data.get('capacity_override')
+
+    query = {
+        'name': name,
+        'fortnight_start': start,
+        'fortnight_end': end,
+        'capacity_override': capacity,
+        'role_id': ObjectId(role_id) if role_id else None,
+        'edited_at': get_timestamp()
+    }
+
+    # filter null updates
+    query = {k: query[k] for k in query if query[k] is not None}
+
+    db.members.update_one({'_id': member_id}, {
+        '$set': query
+    })
+
+    return jsonify({
+        'success': True,
+        'message': 'Membro editado com sucesso'
+    })
+
+
+@bp.route('/members/<objectid:member_id>', methods=('DELETE',))
+@login_required
+def members_delete(member_id):
+    db = get_db()
+
+    if not member_id:
+        return jsonify({
+            'success': False,
+            'message': 'Não foi possivel excluir o membro'
+        })
+
+    db.members.update_one({'_id': member_id}, {
+        '$set': {
+            'active': False,
+            'deactivated_at': get_timestamp()
+        }
+    })
+
+    return jsonify({
+        'success': True,
+        'message': 'Membro excluido com sucesso'
+    })
+

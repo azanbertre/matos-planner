@@ -23,8 +23,8 @@ def projects():
         data = request.json
 
         name = data.get('name')
-        start = data.get('start')
-        end = data.get('end')
+        start = data.get('fortnight_start')
+        end = data.get('fortnight_end')
 
         query = {
             'name': name,
@@ -66,8 +66,8 @@ def projects_edit(project_id):
         })
 
     name = data.get('name')
-    start = data.get('start')
-    end = data.get('end')
+    start = data.get('fortnight_start')
+    end = data.get('fortnight_end')
 
     query = {
         'name': name,
@@ -97,12 +97,13 @@ def projects_delete(project_id):
     if not project_id:
         return jsonify({
             'success': False,
-            'message': 'Não foi possivel editar o projeto'
+            'message': 'Não foi possivel excluir o projeto'
         })
 
     db.projects.update_one({'_id': project_id}, {
         '$set': {
-            'active': False
+            'active': False,
+            'deactivated_at': get_timestamp()
         }
     })
 

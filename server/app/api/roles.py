@@ -43,3 +43,62 @@ def roles():
         'message': '',
         'roles': list(roles)
     })
+
+
+@bp.route('/roles/<objectid:role_id>', methods=('PUT',))
+@login_required
+def roles_edit(role_id):
+    db = get_db()
+
+    data = request.json
+
+    if not role_id:
+        return jsonify({
+            'success': False,
+            'message': 'Não foi possivel editar o cargo'
+        })
+
+    name = data.get('name')
+    capacity = data.get('capacity')
+
+    query = {
+        'name': name,
+        'capacity': capacity,
+        'edited_at': get_timestamp()
+    }
+
+    # filter null updates
+    query = {k: query[k] for k in query if query[k] is not None}
+
+    db.roles.update_one({'_id': role_id}, {
+        '$set': query
+    })
+
+    return jsonify({
+        'success': True,
+        'message': 'Cargo editado com sucesso'
+    })
+
+
+@bp.route('/roles/<objectid:role_id>', methods=('DELETE',))
+@login_required
+def roles_delete(role_id):
+    db = get_db()
+
+    if not role_id:
+        return jsonify({
+            'success': False,
+            'message': 'Não foi possivel excluir o cargo'
+        })
+
+    db.roles.update_one({'_id': role_id}, {
+        '$set': {
+            'active': False,
+            'deactivated_at': get_timestamp()
+        }
+    })
+
+    return jsonify({
+        'success': True,
+        'message': 'Cargo excluido com sucesso'
+    })
