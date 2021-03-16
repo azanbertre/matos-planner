@@ -46,6 +46,36 @@ const api = {
         if (authentication) headers = {Authorization: `Bearer ${store.state.token}`}
 
         return axios.post(url, data, {headers: headers});
+    },
+
+    put(url, data, authentication=true, defaultRoute="/api") {
+        url = host + defaultRoute + url;
+
+        if (store.state.token === '' && authentication) {
+            return new Promise((resolve, reject) => {
+                reject("No authorization token")
+            });
+        }
+
+        var headers = {};
+        if (authentication) headers = {Authorization: `Bearer ${store.state.token}`}
+
+        return axios.put(url, data, {headers: headers});
+    },
+
+    delete(url, authentication=true, defaultRoute="/api") {
+        url = host + defaultRoute + url;
+
+        if (store.state.token === '' && authentication) {
+            return new Promise((resolve, reject) => {
+                reject("No authorization token")
+            });
+        }
+
+        var headers = {};
+        if (authentication) headers = {Authorization: `Bearer ${store.state.token}`}
+
+        return axios.delete(url, {headers: headers});
     }
 }
 
