@@ -3,18 +3,22 @@
         <Appbar/>
         <v-main>
             <router-view />
+            <snack-bar/>
         </v-main>
     </v-app>
 </template>
 
 <script>
 import Appbar from "@/components/Appbar.vue"
+import SnackBar from "@/components/SnackBar.vue"
 import './static/main.css'
+
 export default {
     name: "App",
 
     components: {
-        Appbar
+        Appbar,
+        SnackBar
     },
 
     computed: {
