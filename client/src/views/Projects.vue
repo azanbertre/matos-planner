@@ -177,8 +177,8 @@
 
                 const payload = {
                     name: this.projectName,
-                    start: this.projectStart,
-                    end: this.projectEnd
+                    fortnight_start: this.projectStart,
+                    fortnight_end: this.projectEnd
                 }
 
                 this.$api.post("/projects", payload).then(res => {
@@ -215,8 +215,8 @@
 
                 const payload = {
                     name: this.projectName,
-                    start: this.projectStart,
-                    end: this.projectEnd
+                    fortnight_start: this.projectStart,
+                    fortnight_end: this.projectEnd
                 };
 
                 this.$api.put(`/projects/${this.editingItem._id}`, payload).then(res => {
