@@ -15,6 +15,14 @@
                                 <span v-if="!item.capacity_override">{{ item.role.capacity }}</span>
                                 <span v-else>{{ item.capacity_override }}</span>
                             </template>
+
+                            <template v-slot:item.fortnight_start.value="{ item }">
+                                <span>{{ item.fortnight_start.name }}</span>
+                            </template>
+
+                            <template v-slot:item.fortnight_end.value="{ item }">
+                                <span>{{ item.fortnight_end.name }}</span>
+                            </template>
                         </v-data-table>
                     </v-card-text>
                 </v-card>
@@ -41,10 +49,10 @@
                         </v-row>
                         <v-row>
                             <v-col cols="6">
-                                <v-select v-model="memberStart" outlined label="Inicio" item-text="name" item-value="name" :items="filterFortnights(fortnights, memberStart, memberEnd, true)" hide-details></v-select>
+                                <v-select v-model="memberStart" outlined label="Inicio" item-text="name" item-value="value" :items="filterFortnights(fortnights, memberStart, memberEnd, true)" hide-details></v-select>
                             </v-col>
                             <v-col cols="6">
-                                <v-select v-model="memberEnd" outlined label="Final" item-text="name" item-value="name" :items="filterFortnights(fortnights, memberStart, memberEnd, false)" hide-details></v-select>
+                                <v-select v-model="memberEnd" outlined label="Final" item-text="name" item-value="value" :items="filterFortnights(fortnights, memberStart, memberEnd, false)" hide-details></v-select>
                             </v-col>
                         </v-row>
                         <v-row>
@@ -105,7 +113,6 @@
         data() {
             return {
                 fortnights: [],
-                fortnightsDict: {},
 
                 roles: [],
 
@@ -121,8 +128,8 @@
                     { text: "Nome", value: "name" },
                     { text: "Cargo", value: "role.name" },
                     { text: "Capacidade", value: "capacity" },
-                    { text: "Inicio", value: "fortnight_start" },
-                    { text: "Final", value: "fortnight_end" },
+                    { text: "Inicio", value: "fortnight_start.value" },
+                    { text: "Final", value: "fortnight_end.value" },
                     { text: "", value: "actions", sortable: false }
                 ],
 
@@ -143,11 +150,6 @@
             loadFortnights() {
                 this.$api.get("/projects/fortnights").then(res => {
                     this.fortnights = res.data.fortnights;
-                    this.fortnightsDict = {};
-
-                    this.fortnights.forEach(el => {
-                        this.fortnightsDict[el.name] = el.value;
-                    })
                 })
             },
             filterFortnights(fortnights, start, end, isStart) {
@@ -156,11 +158,11 @@
 
                 if (isStart) {
                     return fortnights.filter(el => {
-                        return el.value <= this.fortnightsDict[end];
+                        return el.value <= end;
                     })
                 } else {
                     return fortnights.filter(el => {
-                        return el.value >= this.fortnightsDict[start];
+                        return el.value >= start;
                     })
                 }
             },
@@ -238,8 +240,8 @@
                 this.editingItem = item;
 
                 this.memberName = item.name;
-                this.memberStart = item.fortnight_start;
-                this.memberEnd = item.fortnight_end;
+                this.memberStart = item.fortnight_start.value;
+                this.memberEnd = item.fortnight_end.value;
                 this.memberRole = item.role_id;
                 this.memberCapacity = item.capacity_override;
             },
@@ -278,7 +280,14 @@
                     this.members.map(el => {
                         if (el._id === this.editingItem._id) {
                             for (let k in payload) {
-                                el[k] = payload[k];
+                                if (['fortnight_start', 'fortnight_end'].includes(k)) {
+                                    el[k] = {
+                                        name: this.fortnights.filter(el => el.value === payload[k])[0].name,
+                                        value: payload[k]
+                                    }
+                                } else {
+                                    el[k] = payload[k];
+                                }
                             }
                         }
                         return el;

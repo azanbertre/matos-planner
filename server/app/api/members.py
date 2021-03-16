@@ -28,8 +28,14 @@ def members():
 
         query = {
             'name': name,
-            'fortnight_start': start,
-            'fortnight_end': end,
+            'fortnight_start': {
+                'name': Fortnight.get_slug(start),
+                'value': start
+            },
+            'fortnight_end': {
+                'name': Fortnight.get_slug(end),
+                'value': end
+            },
             'capacity_override': capacity,
             'role_id': ObjectId(role_id),
             'active': True,
@@ -90,8 +96,14 @@ def members_edit(member_id):
 
     query = {
         'name': name,
-        'fortnight_start': start,
-        'fortnight_end': end,
+        'fortnight_start': {
+            'name': Fortnight.get_slug(start),
+            'value': start
+        },
+        'fortnight_end': {
+            'name': Fortnight.get_slug(end),
+            'value': end
+        },
         'capacity_override': capacity,
         'role_id': ObjectId(role_id) if role_id else None,
         'edited_at': get_timestamp()

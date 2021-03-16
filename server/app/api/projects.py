@@ -7,6 +7,7 @@ from app.utils import get_timestamp
 from app.models.Fortnight import Fortnight
 
 from bson import ObjectId
+from collections import defaultdict
 
 from datetime import datetime, timedelta
 
@@ -30,8 +31,14 @@ def projects():
         query = {
             'name': name,
             'type': typ,
-            'fortnight_start': start,
-            'fortnight_end': end,
+            'fortnight_start': {
+                'name': Fortnight.get_slug(start),
+                'value': start
+            },
+            'fortnight_end': {
+                'name': Fortnight.get_slug(end),
+                'value': end
+            },
             'active': True,
             'created_at': get_timestamp()
         }
@@ -51,6 +58,32 @@ def projects():
         'success': True,
         'message': '',
         'projects': list(projects)
+    })
+
+
+@bp.route('/projects/schedule', methods=('GET',))
+@login_required
+def projects_schedule():
+    db = get_db()
+
+    fortnights = Fortnight.get()
+
+    projects = db.projects.find({
+        'active': {'$ne': False}
+    })
+
+    schedule = defaultdict(list)
+
+    for p in projects:
+        project_fortnights = [f['name'] for f in fortnights if f['name'] >= p['fortnight_start'] and f['name'] <= p['fortnight_end']]
+
+        for pf in project_fortnights:
+            schedule[pf].append(p['name'])
+
+    return jsonify({
+        'success': True,
+        'message': '',
+        'schedule': schedule
     })
 
 
@@ -75,8 +108,14 @@ def projects_edit(project_id):
     query = {
         'name': name,
         'type': typ,
-        'fortnight_start': start,
-        'fortnight_end': end,
+        'fortnight_start': {
+            'name': Fortnight.get_slug(start),
+            'value': start
+        },
+        'fortnight_end': {
+            'name': Fortnight.get_slug(end),
+            'value': end
+        },
         'edited_at': get_timestamp()
     }
 
@@ -121,44 +160,7 @@ def projects_delete(project_id):
 # @login_required
 def fortnights():
 
-    now = datetime.utcnow()
-
-    last_year = now.replace(year=now.year - 1)
-
-    date_1 = last_year.replace(month=12, day=1, hour=0, minute=0, second=0, microsecond=0)
-    date_2 = date_1.replace(day=15)
-
-    months = Fortnight.months
-
-    fortnights = [
-        {
-            'name': Fortnight.get_slug(date_1),
-            'value': date_1
-        },
-        {
-            'name': Fortnight.get_slug(date_2),
-            'value': date_2
-        }
-    ]
-
-    date_1 = date_1.replace(month=1, year=date_1.year + 1)
-    date_2 = date_2.replace(month=1, year=date_1.year)
-
-    for m in months:
-
-        fortnights.append({
-            'name': Fortnight.get_slug(date_1),
-            'value': date_1
-        })
-
-        fortnights.append({
-            'name': Fortnight.get_slug(date_2),
-            'value': date_2
-        })
-
-        if date_1.month < 12:
-            date_1 = date_1.replace(month=date_1.month + 1)
-            date_2 = date_2.replace(month=date_1.month)
+    fortnights = Fortnight.get()
 
     return jsonify({
         'success': True,
