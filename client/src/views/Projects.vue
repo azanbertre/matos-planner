@@ -24,8 +24,11 @@
                     </v-card-title>
                     <v-card-text>
                         <v-row>
-                            <v-col cols="12">
+                            <v-col cols="8">
                                 <v-text-field v-model="projectName" outlined label="Nome" hide-details></v-text-field>
+                            </v-col>
+                            <v-col cols="4">
+                                <v-select v-model="projectType" outlined label="Tipo" :items="types" hide-details></v-select>
                             </v-col>
                         </v-row>
                         <v-row>
@@ -96,13 +99,19 @@
                 fortnights: [],
                 fortnightsDict: {},
                 projects: [],
+                types: [
+                    'Consultoria',
+                    'Assessoria'
+                ],
 
                 projectStart: null,
                 projectEnd: null,
                 projectName: '',
+                projectType: null,
 
                 headers: [
                     { text: "Nome", value: "name" },
+                    { text: "Tipo", value: "type" },
                     { text: "Inicio", value: "fortnight_start" },
                     { text: "Final", value: "fortnight_end" },
                     { text: "", value: "actions", sortable: false }
@@ -169,6 +178,14 @@
                     return false;
                 }
 
+                if (!this.projectType) {
+                    this.$store.commit("setInfo", {
+                        message: "Projeto precisa de um tipo",
+                        success: false
+                    });
+                    return false;
+                }
+
                 return true;
             },
             addProject() {
@@ -177,6 +194,7 @@
 
                 const payload = {
                     name: this.projectName,
+                    type: this.projectType,
                     fortnight_start: this.projectStart,
                     fortnight_end: this.projectEnd
                 }
@@ -190,6 +208,7 @@
                 this.editingItem = item;
 
                 this.projectName = item.name;
+                this.projectType = item.type;
                 this.projectStart = item.fortnight_start;
                 this.projectEnd = item.fortnight_end;
             },
@@ -215,6 +234,7 @@
 
                 const payload = {
                     name: this.projectName,
+                    type: this.projectType,
                     fortnight_start: this.projectStart,
                     fortnight_end: this.projectEnd
                 };
@@ -238,6 +258,7 @@
             cancelEdit() {
                 this.editingItem = null;
                 this.projectName = "";
+                this.projectType = null;
                 this.projectStart = null;
                 this.projectEnd = null;
             },

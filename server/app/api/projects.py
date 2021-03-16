@@ -23,11 +23,13 @@ def projects():
         data = request.json
 
         name = data.get('name')
+        typ = data.get('type')
         start = data.get('fortnight_start')
         end = data.get('fortnight_end')
 
         query = {
             'name': name,
+            'type': typ,
             'fortnight_start': start,
             'fortnight_end': end,
             'active': True,
@@ -66,11 +68,13 @@ def projects_edit(project_id):
         })
 
     name = data.get('name')
+    typ = data.get('type')
     start = data.get('fortnight_start')
     end = data.get('fortnight_end')
 
     query = {
         'name': name,
+        'type': typ,
         'fortnight_start': start,
         'fortnight_end': end,
         'edited_at': get_timestamp()
