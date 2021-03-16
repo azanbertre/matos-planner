@@ -3,10 +3,16 @@
         <v-app-bar color="white" light>
             <!-- <v-app-bar-nav-icon></v-app-bar-nav-icon> -->
 
-            <v-toolbar-title class="title pl-10 text-primary" style="cursor: pointer;" @click="$router.push('/')">
+            <v-toolbar-title class="title text-primary" style="cursor: pointer;" @click="$router.push('/')">
                 <span class="font-weight-bold">Matos</span>
                 <span class="font-weight-light">Planner</span>
             </v-toolbar-title>
+
+            <div class="ml-5" v-if="$store.getters.authenticated">
+                <v-btn text class="text-primary" to="/membros">Membros</v-btn>
+                <v-btn text class="text-primary" to="/projetos">Projetos</v-btn>
+                <v-btn text class="text-primary" to="/outros">Outros</v-btn>
+            </div>
 
             <v-spacer></v-spacer>
 
