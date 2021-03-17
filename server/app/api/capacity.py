@@ -13,6 +13,8 @@ from collections import defaultdict
 
 from datetime import datetime, timedelta
 
+from math import floor
+
 from . import bp
 
 
@@ -31,9 +33,9 @@ def capacity():
         'used': 0
     }
 
-    projects = {p['_id']: p for p in db.projects.find({
+    projects = db.projects.find({
         'active': {'$ne': False}
-    }, {'fortnight_start': 1, 'fortnight_end': 1})}
+    }, {'fortnight_start': 1, 'fortnight_end': 1})
 
     members = db.members.aggregate([
         {
@@ -65,29 +67,23 @@ def capacity():
         for f in [f for f in Fortnight.get() if m['fortnight_start']['value'] <= str(f['value']) <= m['fortnight_end']['value']]:
             fortnights[f['name']]['capacity']['total'] += member_capacity
 
-        for p_id in m.get('projects', []):
-            if p_id not in projects:
-                continue
-            project = projects[p_id]
-
-            for f in [f for f in Fortnight.get() if project['fortnight_start']['value'] <= str(f['value']) <= project['fortnight_end']['value']]:
-                fortnights[f['name']]['capacity']['used'] += member_capacity
+    for p in projects:
+        for f in [f for f in Fortnight.get() if p['fortnight_start']['value'] <= str(f['value']) <= p['fortnight_end']['value']]:
+            fortnights[f['name']]['capacity']['used'] += 1
 
     fortnights = sorted([{
         'name': k,
         'value': fortnights[k]['value'],
         'capacity': {
-            'total': fortnights[k]['capacity']['total'],
+            'total': floor(fortnights[k]['capacity']['total'] / 2),
             'used': fortnights[k]['capacity']['used'],
-            'free': fortnights[k]['capacity']['total'] - fortnights[k]['capacity']['used']
+            'free': floor(fortnights[k]['capacity']['total'] / 2) - fortnights[k]['capacity']['used']
         }
     } for k in fortnights], key=lambda x: x['value'])
 
     now = datetime.utcnow()
 
     currency_capacity = [f for f in fortnights if is_current_fortnight(now, f['value'])][0]
-
-    print([f for f in fortnights if is_current_fortnight(now, f['value'])])
 
     return jsonify({
         'success': True,
