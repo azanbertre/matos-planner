@@ -16,6 +16,10 @@
                                 <span v-else>{{ item.capacity_override }}</span>
                             </template>
 
+                            <template v-slot:item.projects="{ item }">
+                                <span>{{ item.projects ? item.projects.length : 0 }}</span>
+                            </template>
+
                             <template v-slot:item.fortnight_start.value="{ item }">
                                 <span>{{ item.fortnight_start.name }}</span>
                             </template>
@@ -55,6 +59,30 @@
                                 <v-select v-model="memberEnd" outlined label="Final" item-text="name" item-value="value" :items="filterFortnights(fortnights, memberStart, memberEnd, false)" hide-details></v-select>
                             </v-col>
                         </v-row>
+
+                        <v-row>
+                            <v-col cols="12">
+                                <v-card>
+                                    <v-card-title class="text-h6 text-primary">
+                                        Projetos
+                                    </v-card-title>
+                                    <v-card-text>
+                                        <v-select v-model="selectedProject" outlined :items="projects" item-text="name" item-value="_id" label="Projetos"></v-select>
+                                        <v-btn class="block-primary" @click="addProject()">Adicionar</v-btn>
+
+                                        <v-divider class="mt-5"></v-divider>
+
+                                        <v-list>
+                                            <v-list-item v-for="(item, i) in memberProjects" :key="i">
+                                                <span>{{ item.name }}</span>
+                                                <v-icon class="ml-5" color="red" dark @click="removeProject(item._id)">mdi-close</v-icon>
+                                            </v-list-item>
+                                        </v-list>
+                                    </v-card-text>
+                                </v-card>
+                            </v-col>
+                        </v-row>
+
                         <v-row>
                             <v-col cols="12" class="d-flex">
                                 <v-spacer></v-spacer>
@@ -121,13 +149,18 @@
                 memberName: '',
                 memberRole: null,
                 memberCapacity: null,
+                memberProjects: [],
+
+                selectedProject: null,
 
                 members: [],
+                projects: [],
 
                 headers: [
                     { text: "Nome", value: "name" },
                     { text: "Cargo", value: "role.name" },
                     { text: "Capacidade", value: "capacity" },
+                    { text: "# Projetos", value: "projects" },
                     { text: "Inicio", value: "fortnight_start.value" },
                     { text: "Final", value: "fortnight_end.value" },
                     { text: "", value: "actions", sortable: false }
@@ -144,6 +177,7 @@
             this.loadFortnights();
             this.loadMembers();
             this.loadRoles();
+            this.loadProjects();
         },
 
         methods: {
@@ -178,6 +212,13 @@
                     const data = res.data;
 
                     this.members = data.members;
+                })
+            },
+            loadProjects() {
+                this.$api.get("/projects").then(res => {
+                    const data = res.data;
+
+                    this.projects = data.projects;
                 })
             },
             validateData() {
@@ -219,6 +260,14 @@
 
                 return true;
             },
+            addProject() {
+                if (this.memberProjects.filter(el => el._id === this.selectedProject).length) return;
+
+                this.memberProjects.push(this.projects.filter(el => el._id === this.selectedProject)[0]);
+            },
+            removeProject(id) {
+                this.memberProjects = this.memberProjects.filter(el => el._id !== id);
+            },
             addMember() {
 
                 if (!this.validateData()) return;
@@ -228,7 +277,8 @@
                     fortnight_start: this.memberStart,
                     fortnight_end: this.memberEnd,
                     role_id: this.memberRole,
-                    capacity_override: this.memberCapacity
+                    capacity_override: this.memberCapacity,
+                    projects: this.memberProjects.map(el => el._id)
                 }
 
                 this.$api.post("/members", payload).then(res => {
@@ -244,6 +294,7 @@
                 this.memberEnd = item.fortnight_end.value;
                 this.memberRole = item.role_id;
                 this.memberCapacity = item.capacity_override;
+                this.memberProjects = item.projects;
             },
             deleteItem(item) {
                 this.deletingItem = item;
@@ -270,7 +321,8 @@
                     fortnight_start: this.memberStart,
                     fortnight_end: this.memberEnd,
                     role_id: this.memberRole,
-                    capacity_override: this.memberCapacity
+                    capacity_override: this.memberCapacity,
+                    projects: this.memberProjects.map(el => el._id)
                 };
 
                 this.$api.put(`/members/${this.editingItem._id}`, payload).then(res => {
@@ -285,6 +337,8 @@
                                         name: this.fortnights.filter(el => el.value === payload[k])[0].name,
                                         value: payload[k]
                                     }
+                                } else if (k === 'projects') {
+                                    el[k] = this.memberProjects;
                                 } else {
                                     el[k] = payload[k];
                                 }
@@ -303,6 +357,7 @@
                 this.memberEnd = null;
                 this.memberRole = null;
                 this.memberCapacity = null;
+                this.memberProjects = [];
             },
             getEditTitle() {
                 return !this.editingItem ? "Adicionar novo membro" : `Editar membro (${this.editingItem.name})`;

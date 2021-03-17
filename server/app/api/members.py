@@ -26,6 +26,8 @@ def members():
         role_id = data.get('role_id')
         capacity = data.get('capacity_override')
 
+        projects = data.get('projects', [])
+
         query = {
             'name': name,
             'fortnight_start': {
@@ -36,8 +38,8 @@ def members():
                 'name': Fortnight.get_slug(end),
                 'value': end
             },
-            'projects': [],
-            'capacity_override': capacity,
+            'projects': [ObjectId(p) for p in projects],
+            'capacity_override': int(capacity) if isinstance(capacity, int) else None,
             'role_id': ObjectId(role_id),
             'active': True,
             'created_at': get_timestamp()
@@ -50,7 +52,11 @@ def members():
             'message': 'Membro adicionado',
         })
 
-    members = db.members.aggregate([
+    projects = list(db.projects.find({
+        'active': {'$ne': False}
+    }, {'name': 1, '_id': 1}))
+
+    members = list(db.members.aggregate([
         {
             '$match': {
                 'active': {'$ne': False}
@@ -67,12 +73,22 @@ def members():
         {
             '$unwind': '$role'
         }
-    ])
+    ]))
+
+    for m in members:
+
+        m['projects_ids'] = m.get('projects', [])
+        m['projects'] = []
+
+        for p in projects:
+            if p['_id'] not in m['projects_ids']:
+                continue
+            m['projects'].append(p)
 
     return jsonify({
         'success': True,
         'message': '',
-        'members': list(members)
+        'members': members
     })
 
 
@@ -122,6 +138,8 @@ def members_edit(member_id):
     role_id = data.get('role_id')
     capacity = data.get('capacity_override')
 
+    projects = data.get('projects', [])
+
     query = {
         'name': name,
         'fortnight_start': {
@@ -132,7 +150,8 @@ def members_edit(member_id):
             'name': Fortnight.get_slug(end),
             'value': end
         },
-        'capacity_override': capacity,
+        'projects': [ObjectId(p) for p in projects],
+        'capacity_override': int(capacity) if isinstance(capacity, int) else None,
         'role_id': ObjectId(role_id) if role_id else None,
         'edited_at': get_timestamp()
     }
