@@ -137,7 +137,7 @@
 
                 return true;
             },
-            addProject() {
+            addRole() {
 
                 if (!this.validateData()) return;
 
