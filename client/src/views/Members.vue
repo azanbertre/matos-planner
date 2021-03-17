@@ -67,7 +67,7 @@
                                         Projetos
                                     </v-card-title>
                                     <v-card-text>
-                                        <v-select v-model="selectedProject" outlined :items="projects" item-text="name" item-value="_id" label="Projetos"></v-select>
+                                        <v-select v-model="selectedProject" outlined :items="filterProjects(projects)" item-text="name" item-value="_id" label="Projetos"></v-select>
                                         <v-btn class="block-primary" @click="addProject()">Adicionar</v-btn>
 
                                         <v-divider class="mt-5"></v-divider>
@@ -221,6 +221,20 @@
                     this.projects = data.projects;
                 })
             },
+            filterProjects(projects) {
+                if (!this.memberStart && !this.memberEnd) return projects;
+
+                var res = [...projects];
+
+                if (this.memberStart) {
+                    res = res.filter(el => el.fortnight_end.value >= this.memberStart);
+                }
+                if (this.memberEnd) {
+                    res = res.filter(el => el.fortnight_start.value <= this.memberEnd);
+                }
+
+                return res;
+            },
             validateData() {
                 if (!this.memberName || !this.memberName.length) {
                     this.$store.commit("setInfo", {
@@ -256,6 +270,21 @@
 
                 if (this.memberCapacity && !this.memberCapacity.length) {
                     this.memberCapacity = null;
+                }
+
+                if (this.memberProjects) {
+                    var needAlert = false;
+                    this.memberProjects.forEach(el => {
+                        if (!this.filterProjects(this.projects).filter(e => e._id === el._id).length) needAlert = true;
+                    })
+
+                    if (needAlert) {
+                        this.$store.commit("setInfo", {
+                            message: "Não é possivel adicionar um projeto que não coincide com o inicio e fim do membro",
+                            success: false
+                        });
+                        return false;
+                    }
                 }
 
                 return true;

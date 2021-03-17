@@ -54,7 +54,7 @@ def members():
 
     projects = list(db.projects.find({
         'active': {'$ne': False}
-    }, {'name': 1, '_id': 1}))
+    }, {'name': 1, '_id': 1, 'fortnight_start': 1, 'fortnight_end': 1}))
 
     members = list(db.members.aggregate([
         {
