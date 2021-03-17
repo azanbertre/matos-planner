@@ -98,7 +98,7 @@
     export default {
         props: ["headers", "scheduledData"],
         created() {
-            console.log(this.scheduledData);
+
         },
         data() {
             return {}

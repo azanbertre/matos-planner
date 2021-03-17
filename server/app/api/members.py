@@ -36,6 +36,7 @@ def members():
                 'name': Fortnight.get_slug(end),
                 'value': end
             },
+            'projects': [],
             'capacity_override': capacity,
             'role_id': ObjectId(role_id),
             'active': True,
@@ -72,6 +73,33 @@ def members():
         'success': True,
         'message': '',
         'members': list(members)
+    })
+
+
+@bp.route('/members/schedule', methods=('GET',))
+@login_required
+def members_schedule():
+    db = get_db()
+
+    fortnights = Fortnight.get()
+
+    members = db.members.find({
+        'active': {'$ne': False}
+    })
+
+    schedule = []
+
+    for p in members:
+        schedule.append({
+            'name': p['name'],
+            'start': len([f for f in fortnights if str(f['value']) <= p['fortnight_start']['value']]) - 1,
+            'end': len([f for f in fortnights if str(f['value']) <= p['fortnight_end']['value']]) - 1
+        })
+
+    return jsonify({
+        'success': True,
+        'message': '',
+        'schedule': sorted(schedule, key=lambda x: x['start']),
     })
 
 
