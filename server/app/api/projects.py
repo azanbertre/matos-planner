@@ -6,6 +6,8 @@ from app.decorators import login_required
 from app.utils import get_timestamp
 from app.models.Fortnight import Fortnight
 
+from copy import deepcopy
+
 from bson import ObjectId
 from collections import defaultdict
 
@@ -72,18 +74,19 @@ def projects_schedule():
         'active': {'$ne': False}
     })
 
-    schedule = defaultdict(list)
+    schedule = []
 
     for p in projects:
-        project_fortnights = [f['name'] for f in fortnights if f['name'] >= p['fortnight_start'] and f['name'] <= p['fortnight_end']]
-
-        for pf in project_fortnights:
-            schedule[pf].append(p['name'])
+        schedule.append({
+            'name': p['name'],
+            'start': len([f for f in fortnights if str(f['value']) <= p['fortnight_start']['value']]) - 1,
+            'end': len([f for f in fortnights if str(f['value']) <= p['fortnight_end']['value']]) - 1
+        })
 
     return jsonify({
         'success': True,
         'message': '',
-        'schedule': schedule
+        'schedule': sorted(schedule, key=lambda x: x['start']),
     })
 
 
