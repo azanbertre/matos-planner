@@ -11,9 +11,9 @@
                     <span>{{ k.name.substr(0, k.name.length - 7) }}</span>
                 </div>
                 <div class="g-schedule block-primary" :style="getScheduleStyle(k)">
-                    <span style="left: 1em; position: absolute;" v-if="k.end - k.start > 4">{{ k.name }}</span>
+                    <span style="left: 1em; position: absolute;" v-if="k.end - k.start > 6">{{ k.name }}</span>
                     <span>{{ k.name }}</span>
-                    <span style="right: 1em; position: absolute;" v-if="k.end - k.start > 4">{{ k.name }}</span>
+                    <span style="right: 1em; position: absolute;" v-if="k.end - k.start > 6">{{ k.name }}</span>
                 </div>
             </div>
 
