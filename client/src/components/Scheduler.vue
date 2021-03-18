@@ -1,5 +1,5 @@
 <template>
-    <div fluid id="schedule">
+    <div fluid id="schedule" v-dragscroll>
         <div class="g-wrapper">
             <div class="g-header">
                 <div v-for="k in headers" :key="k.name" class="g-cell">

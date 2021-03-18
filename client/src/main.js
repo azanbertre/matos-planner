@@ -7,6 +7,8 @@ import vuetify from "./plugins/vuetify";
 import axios from 'axios'
 import VueClipboard from 'vue-clipboard2'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
+import VueDragscroll from 'vue-dragscroll'
+
 import 'swiper/swiper-bundle.css'
 
 Vue.config.productionTip = false;
@@ -81,6 +83,7 @@ const api = {
 
 Vue.prototype.$api = api;
 
+Vue.use(VueDragscroll)
 Vue.use(VueAwesomeSwiper, VueClipboard)
 
 new Vue({
