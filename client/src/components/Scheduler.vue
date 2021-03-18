@@ -108,7 +108,7 @@
         },
         methods: {
             getScheduleStyle(item) {
-                return `transform: translate(calc(10em * ${item.start} + 5px), 5px); width: calc(10em * ${Math.max(item.end - item.start, 1)} - 10px)`;
+                return `transform: translate(calc(10em * ${item.start} + 5px), 5px); width: calc(10em * ${Math.max((item.end - item.start) + 1, 1)} - 10px)`;
             }
         },
     };
