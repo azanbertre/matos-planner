@@ -7,12 +7,17 @@
                 </div>
             </div>
             <div class="g-row" v-for="k in scheduledData" :key="k.name">
+                <div v-for="k in headers" :key="k.name" class="g-cell" style="opacity: 0.2">
+                    <span>{{ k.name.substr(0, k.name.length - 7) }}</span>
+                </div>
                 <div class="g-schedule block-primary" :style="getScheduleStyle(k)">
-                    {{ k.name }}
+                    <span style="left: 1em; position: absolute;" v-if="k.end - k.start > 4">{{ k.name }}</span>
+                    <span>{{ k.name }}</span>
+                    <span style="right: 1em; position: absolute;" v-if="k.end - k.start > 4">{{ k.name }}</span>
                 </div>
             </div>
 
-            <div v-for="(k, i) in headers" :key="i" class="g-vertical-line" :style="`transform: translate(calc(10em * ${i}))`"></div>
+            <div v-for="(k, i) in headers" :key="i" class="g-vertical-line" :style="`transform: translate(calc(7em * ${i}))`"></div>
         </div>
     </div>
 </template>
@@ -61,14 +66,16 @@
         align-items: center;
         justify-content: center;
 
-        min-width: 10em;
-        width: 10em;
+        min-width: 8.75em;
+        width: 8.75em;
         text-align: center;
+
+        font-size: 0.8em;
     }
 
     .g-schedule {
         position: absolute;
-        width: 10em;
+        width: 7em;
         height: 40px;
 
         display: flex;
@@ -87,7 +94,7 @@
 
         top: 0;
 
-        width: 10em;
+        width: 7em;
     }
 
     .g-vertical-line:last-child {
@@ -108,7 +115,7 @@
         },
         methods: {
             getScheduleStyle(item) {
-                return `transform: translate(calc(10em * ${item.start} + 5px), 5px); width: calc(10em * ${Math.max((item.end - item.start) + 1, 1)} - 10px)`;
+                return `transform: translate(calc(7em * ${item.start} + 5px), 5px); width: calc(7em * ${Math.max((item.end - item.start) + 1, 1)} - 10px)`;
             }
         },
     };
