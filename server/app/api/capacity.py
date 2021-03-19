@@ -64,11 +64,11 @@ def capacity():
     for m in members:
         member_capacity = int(m['role']['capacity'] if not m.get('capacity_override') else m['capacity_override'])
 
-        for f in [f for f in Fortnight.get() if m['fortnight_start']['value'] <= str(f['value']) <= m['fortnight_end']['value']]:
+        for f in [f for f in Fortnight.get() if m['fortnight_start']['value'] <= f['value'].isoformat() <= m['fortnight_end']['value']]:
             fortnights[f['name']]['capacity']['total'] += member_capacity
 
     for p in projects:
-        for f in [f for f in Fortnight.get() if p['fortnight_start']['value'] <= str(f['value']) <= p['fortnight_end']['value']]:
+        for f in [f for f in Fortnight.get() if p['fortnight_start']['value'] <= f['value'].isoformat() <= p['fortnight_end']['value']]:
             fortnights[f['name']]['capacity']['used'] += 1
 
     fortnights = sorted([{
