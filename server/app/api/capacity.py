@@ -19,7 +19,6 @@ from . import bp
 
 
 @bp.route('/capacity', methods=('GET',))
-@login_required
 def capacity():
     db = get_db()
 

@@ -64,7 +64,6 @@ def projects():
 
 
 @bp.route('/projects/schedule', methods=('GET',))
-@login_required
 def projects_schedule():
     db = get_db()
 
@@ -160,7 +159,6 @@ def projects_delete(project_id):
 
 
 @bp.route('/projects/fortnights', methods=('GET',))
-# @login_required
 def fortnights():
 
     fortnights = Fortnight.get()

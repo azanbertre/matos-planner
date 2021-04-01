@@ -137,27 +137,27 @@
             },
 
             loadFortnights() {
-                this.$api.get("/projects/fortnights").then(res => {
+                this.$api.get("/projects/fortnights", false).then(res => {
                     this.fortnights = res.data.fortnights;
                 })
             },
             loadRoles() {
-                this.$api.get("/roles").then(res => {
+                this.$api.get("/roles", false).then(res => {
                     this.roles = res.data.roles;
                 })
             },
             loadScheduledProjectData() {
-                this.$api.get("/projects/schedule").then(res => {
+                this.$api.get("/projects/schedule", false).then(res => {
                     this.scheduledProjectData = res.data.schedule;
                 })
             },
             loadScheduledMemberData() {
-                this.$api.get("/members/schedule").then(res => {
+                this.$api.get("/members/schedule", false).then(res => {
                     this.scheduledMemberData = res.data.schedule;
                 })
             },
             loadCapacity() {
-                this.$api.get("/capacity").then(res => {
+                this.$api.get("/capacity", false).then(res => {
                     this.capacity = res.data.capacity;
                     this.currentCapacity = res.data.currentCapacity;
 

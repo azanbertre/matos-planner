@@ -93,7 +93,6 @@ def members():
 
 
 @bp.route('/members/schedule', methods=('GET',))
-@login_required
 def members_schedule():
     db = get_db()
 

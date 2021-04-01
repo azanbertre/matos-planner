@@ -8,31 +8,9 @@ from app.utils import get_timestamp
 from . import bp
 
 
-@bp.route('/roles', methods=('GET', 'POST'))
-@login_required
+@bp.route('/roles', methods=('GET',))
 def roles():
     db = get_db()
-
-    if request.method == 'POST':
-
-        data = request.json
-
-        name = data.get('name')
-        capacity = data.get('capacity', 1)
-
-        query = {
-            'name': name,
-            'capacity': int(capacity),
-            'active': True,
-            'created_at': get_timestamp()
-        }
-
-        db.roles.insert_one(query)
-
-        return jsonify({
-            'success': False,
-            'message': 'Cargo adicionado',
-        })
 
     roles = db.roles.find({
         'active': {'$ne': False}
@@ -42,6 +20,31 @@ def roles():
         'success': True,
         'message': '',
         'roles': list(roles)
+    })
+
+
+@bp.route('/roles', methods=('POST',))
+@login_required
+def post_roles():
+    db = get_db()
+
+    data = request.json
+
+    name = data.get('name')
+    capacity = data.get('capacity', 1)
+
+    query = {
+        'name': name,
+        'capacity': int(capacity),
+        'active': True,
+        'created_at': get_timestamp()
+    }
+
+    db.roles.insert_one(query)
+
+    return jsonify({
+        'success': False,
+        'message': 'Cargo adicionado',
     })
 
 
